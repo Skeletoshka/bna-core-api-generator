@@ -6,8 +6,6 @@ import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
 import biz.bna.core.utils.SqlUtils;
 
-import java.io.File;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +54,8 @@ public class ModelGenerator implements Runnable {
                     (metadata.getMaxLength()!=null?sizeAnnotation:"") +
                     "\tprivate %s %s;\n", metadata.getColumnName(),
                     metadata.getNullable().equals(0),
-                    convertPgTypeToJavaType(metadata.getDataTypeName()), getAttributeName(metadata.getColumnName()));
+                    OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()),
+                    OrmUtils.getAttributeName(metadata.getColumnName()));
         }).collect(Collectors.toList());
     }
 
@@ -64,52 +63,19 @@ public class ModelGenerator implements Runnable {
         return columnMetadata.stream().map(metadata -> {
             String getMethod = String.format("" +
                     "\tpublic %s get%s(){\n\t\treturn %s;\n\t}\n",
-                    convertPgTypeToJavaType(metadata.getDataTypeName()),
-                    getAttributeName(metadata.getColumnName()).substring(0, 1).toUpperCase() + getAttributeName(metadata.getColumnName()).substring(1),
-                    getAttributeName(metadata.getColumnName()));
+                    OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()),
+                    OrmUtils.getAttributeName(metadata.getColumnName()).substring(0, 1).toUpperCase()
+                            + OrmUtils.getAttributeName(metadata.getColumnName()).substring(1),
+                    OrmUtils.getAttributeName(metadata.getColumnName()));
             String setMethod = String.format("" +
                             "\tpublic %s set%s(%s value){\n\t\tthis.%s = value;\n\t}\n",
-                    convertPgTypeToJavaType(metadata.getDataTypeName()),
-                    getAttributeName(metadata.getColumnName()).substring(0, 1).toUpperCase() + getAttributeName(metadata.getColumnName()).substring(1),
-                    convertPgTypeToJavaType(metadata.getDataTypeName()),
-                    getAttributeName(metadata.getColumnName()));
+                    OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()),
+                    OrmUtils.getAttributeName(metadata.getColumnName()).substring(0, 1).toUpperCase()
+                            + OrmUtils.getAttributeName(metadata.getColumnName()).substring(1),
+                    OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()),
+                    OrmUtils.getAttributeName(metadata.getColumnName()));
             return getMethod.concat(setMethod);
         }).collect(Collectors.toList());
-    }
-
-    private String buildConstructorPlaceholder(String table){
-        return String.format("\n\tpublic %s(){\n\n\t}\n\n", getClassName(table));
-    }
-
-    private String convertPgTypeToJavaType(String pgDataType){
-        switch (pgDataType){
-            case "integer":
-            case "int4": return "Integer";
-            case "date":
-            case "datetime": return "Date";
-            case "varchar":
-            case "character varying":return "String";
-            case "float":
-            case "double":
-            case "numeric": return "Double";
-            default: return "???";
-        }
-    }
-
-    private String getAttributeName(String columnName){
-        String attributeName = ConsoleApplication.columnSubstitutions.get(columnName.replace("_", ""));
-        if(attributeName != null){
-            return attributeName;
-        }else{
-            Integer index = columnName.indexOf('_');
-            columnName = columnName.replaceFirst("_", "");
-            String str = ("" + columnName.charAt(index)).toUpperCase(Locale.ROOT);
-            return columnName.substring(0, index) + str + columnName.substring(index + 1);
-        }
-    }
-
-    private String getClassName(String cls){
-        return ConsoleApplication.tableSubstitutions.get(cls);
     }
 
     @Override
@@ -126,16 +92,16 @@ public class ModelGenerator implements Runnable {
                 );
                 List<String> fields = buildFieldsPlaceholder(entity, OrmUtils.getSchemaName());
                 List<String> methods = buildMethodsPlaceholder();
-                String constructPlaceholder = buildConstructorPlaceholder(entity);
+                String constructPlaceholder = OrmUtils.buildConstructorPlaceholder(entity);
                 String file = "package " + packageName.concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
                         .concat(String.format("\n\n@Entity\n@Table(name = \"%s\")\n public class %s{\n\n",
-                                entity, getClassName(entity)))
+                                entity, OrmUtils.getClassName(entity)))
                         .concat(String.join("\n", fields))
                         .concat(constructPlaceholder)
                         .concat(String.join("\n", methods))
                         .concat("}");
-                FileWriter.writeFile("javaClasses\\model", getClassName(entity).concat(".java"), file);
+                FileWriter.writeFile("javaClasses\\model", OrmUtils.getClassName(entity).concat(".java"), file);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

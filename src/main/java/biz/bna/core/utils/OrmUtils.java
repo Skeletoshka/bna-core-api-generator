@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 
 public class OrmUtils {
@@ -72,5 +73,40 @@ public class OrmUtils {
         } catch (Exception e){
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    public static String buildConstructorPlaceholder(String table){
+        return String.format("\n\tpublic %s(){\n\n\t}\n\n", getClassName(table));
+    }
+
+    public static String convertPgTypeToJavaType(String pgDataType){
+        switch (pgDataType){
+            case "integer":
+            case "int4": return "Integer";
+            case "date":
+            case "datetime": return "Date";
+            case "varchar":
+            case "character varying":return "String";
+            case "float":
+            case "double":
+            case "numeric": return "Double";
+            default: return "???";
+        }
+    }
+
+    public static String getAttributeName(String columnName){
+        String attributeName = ConsoleApplication.columnSubstitutions.get(columnName.replace("_", ""));
+        if(attributeName != null){
+            return attributeName;
+        }else{
+            Integer index = columnName.indexOf('_');
+            columnName = columnName.replaceFirst("_", "");
+            String str = ("" + columnName.charAt(index)).toUpperCase(Locale.ROOT);
+            return columnName.substring(0, index) + str + columnName.substring(index + 1);
+        }
+    }
+
+    public static String getClassName(String cls){
+        return ConsoleApplication.tableSubstitutions.get(cls);
     }
 }
