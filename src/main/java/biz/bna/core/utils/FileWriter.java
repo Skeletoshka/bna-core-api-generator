@@ -10,6 +10,13 @@ import java.util.Collections;
 
 public class FileWriter {
 
+    public static final String MODEL_PATH = "javaClasses\\model";
+    public static final String VIEW_PATH = "javaClasses\\view";
+    public static final String DTO_PATH = "javaClasses\\dto";
+    public static final String CONTROLLER_PATH = "javaClasses\\controller";
+    public static final String SERVICE_PATH = "javaClasses\\service";
+    public static final String VALIDATOR_PATH = "javaClasses\\validator";
+    public static final String REPOSITORY_PATH = "javaClasses\\repository";
     public static void writeFile(String path,String fileName, String content) throws IOException {
         Files.createDirectories(Paths.get(path));
         Files.write(Paths.get(path.concat("\\").concat(fileName)), Collections.singleton(content), StandardCharsets.UTF_8);

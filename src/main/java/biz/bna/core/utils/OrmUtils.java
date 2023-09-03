@@ -75,10 +75,6 @@ public class OrmUtils {
         }
     }
 
-    public static String buildConstructorPlaceholder(String table){
-        return String.format("\n\tpublic %s(){\n\n\t}\n\n", getClassName(table));
-    }
-
     public static String convertPgTypeToJavaType(String pgDataType){
         switch (pgDataType){
             case "integer":

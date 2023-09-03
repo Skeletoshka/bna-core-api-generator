@@ -62,7 +62,7 @@ public class ModelGenerator implements Runnable {
     private List<String> buildMethodsPlaceholder(){
         return columnMetadata.stream().map(metadata -> {
             String getMethod = String.format("" +
-                    "\tpublic %s get%s(){\n\t\treturn %s;\n\t}\n",
+                    "\tpublic %s get%s(){\n\t\treturn %s;\n\t}\n\n",
                     OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()),
                     OrmUtils.getAttributeName(metadata.getColumnName()).substring(0, 1).toUpperCase()
                             + OrmUtils.getAttributeName(metadata.getColumnName()).substring(1),
@@ -76,6 +76,19 @@ public class ModelGenerator implements Runnable {
                     OrmUtils.getAttributeName(metadata.getColumnName()));
             return getMethod.concat(setMethod);
         }).collect(Collectors.toList());
+    }
+
+    public String buildConstructorPlaceholder(String table){
+        String noParameterConstructor = String.format("\n\tpublic %s(){\n\n\t}\n\n", OrmUtils.getClassName(table));
+        String parameterConstructor = String.format("\tpublic %s(\n\t\t\t",
+                        OrmUtils.getClassName(table)).concat(columnMetadata.stream()
+                .map(metadata -> OrmUtils.convertPgTypeToJavaType(metadata.getDataTypeName()).concat(" ")
+                        .concat(OrmUtils.getAttributeName(metadata.getColumnName()))).collect(Collectors.joining(",\n\t\t\t")))
+                .concat("){\n\t\t")
+                .concat(columnMetadata.stream().map(metadata -> "this.".concat(OrmUtils.getAttributeName(metadata.getColumnName()))
+                        .concat(" = ").concat(OrmUtils.getAttributeName(metadata.getColumnName()))).collect(Collectors.joining(";\n\t\t")))
+                .concat("\n\t}\n\n");
+        return noParameterConstructor.concat(parameterConstructor);
     }
 
     @Override
@@ -92,7 +105,7 @@ public class ModelGenerator implements Runnable {
                 );
                 List<String> fields = buildFieldsPlaceholder(entity, OrmUtils.getSchemaName());
                 List<String> methods = buildMethodsPlaceholder();
-                String constructPlaceholder = OrmUtils.buildConstructorPlaceholder(entity);
+                String constructPlaceholder = buildConstructorPlaceholder(entity);
                 String file = "package " + packageName.concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
                         .concat(String.format("\n\n@Entity\n@Table(name = \"%s\")\n public class %s{\n\n",
@@ -101,7 +114,7 @@ public class ModelGenerator implements Runnable {
                         .concat(constructPlaceholder)
                         .concat(String.join("\n", methods))
                         .concat("}");
-                FileWriter.writeFile("javaClasses\\model", OrmUtils.getClassName(entity).concat(".java"), file);
+                FileWriter.writeFile(FileWriter.MODEL_PATH, OrmUtils.getClassName(entity).concat(".java"), file);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
