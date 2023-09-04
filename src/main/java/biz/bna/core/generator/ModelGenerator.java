@@ -2,6 +2,7 @@ package biz.bna.core.generator;
 
 import biz.bna.core.ConsoleApplication;
 import biz.bna.core.dto.ColumnMetadata;
+import biz.bna.core.utils.DatabaseUtils;
 import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
 import biz.bna.core.utils.SqlUtils;
@@ -26,29 +27,14 @@ public class ModelGenerator implements Runnable {
     }
 
     private List<String> buildFieldsPlaceholder(String entity, String schema){
-        String sql = "" +
-                "SELECT c.column_name, " +
-                "    c.data_type, " +
-                "    c.character_maximum_length AS max_lenght, " +
-                "    pgd.description, " +
-                "    CASE WHEN c.is_nullable = 'YES' THEN 1 ELSE 0 END AS \"nullable\" " +
-                "FROM pg_catalog.pg_statio_all_tables as st " +
-                "INNER JOIN pg_catalog.pg_description pgd ON ( " +
-                "    pgd.objoid = st.relid " +
-                ") " +
-                "INNER JOIN information_schema.columns c ON ( " +
-                "    pgd.objsubid   = c.ordinal_position AND " +
-                "    c.table_schema = :schema AND " +
-                "    c.table_name   = :table " +
-                ")";
-        Map<String, Object> params = Map.of("table", entity, "schema", schema);
-        columnMetadata = SqlUtils.findListForObject(sql, params, ColumnMetadata.class);
+        columnMetadata = DatabaseUtils.extractColumnMetadata(entity, schema);
         return columnMetadata.stream().map(metadata -> {
             String nullAnnotation = String.format("\t@NotNull(message = \"Поле \\\"%s\\\" не может быть пустым\")\n",
                     metadata.getColumnDescription());
             String sizeAnnotation = String.format("\t@Size(max = %d, message = \"Поле \\\"%s\\\" не может иметь более {max} символов)\n",
                     metadata.getMaxLength(), metadata.getColumnDescription());
             return String.format("" +
+                            (metadata.getIsPrimaryKey()!= null && metadata.getIsPrimaryKey().equals(1)?"\t@Id\n":"") +
                     "\t@Column(name = \"%s\", nullable = %s)\n" +
                     (metadata.getNullable().equals(0)?nullAnnotation:"") +
                     (metadata.getMaxLength()!=null?sizeAnnotation:"") +

@@ -19,6 +19,9 @@ public class ColumnMetadata {
     @Column(name = "nullable")
     private Integer nullable;
 
+    @Column(name = "pk")
+    private Integer isPrimaryKey;
+
     public ColumnMetadata() {
     }
 
@@ -60,5 +63,13 @@ public class ColumnMetadata {
 
     public void setNullable(Integer nullable) {
         this.nullable = nullable;
+    }
+
+    public Integer getIsPrimaryKey() {
+        return isPrimaryKey;
+    }
+
+    public void setIsPrimaryKey(Integer isPrimaryKey) {
+        this.isPrimaryKey = isPrimaryKey;
     }
 }
