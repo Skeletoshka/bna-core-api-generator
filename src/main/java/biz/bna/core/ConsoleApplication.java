@@ -2,6 +2,7 @@ package biz.bna.core;
 
 import biz.bna.core.generator.DTOGenerator;
 import biz.bna.core.generator.ModelGenerator;
+import biz.bna.core.generator.ViewGenerator;
 import biz.bna.core.utils.OrmUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,11 @@ public class ConsoleApplication implements CommandLineRunner {
         DTOGenerator dtoGenerator = new DTOGenerator(packageName);
         dtoGenerator.forEntities(entities);
         dtoGenerator.run();
+
+        //Генерация View
+        ViewGenerator viewGenerator = new ViewGenerator(packageName);
+        viewGenerator.forEntities(entities);
+        viewGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {

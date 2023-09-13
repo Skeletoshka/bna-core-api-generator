@@ -76,7 +76,7 @@ public class DTOGenerator implements Runnable{
                 .concat("){\n\t\t")
                 .concat(columnMetadata.stream().map(metadata -> "this.".concat(OrmUtils.getAttributeName(metadata.getColumnName()))
                         .concat(" = ").concat(OrmUtils.getAttributeName(metadata.getColumnName()))).collect(Collectors.joining(";\n\t\t")))
-                .concat("\n\t}\n\n");
+                .concat(";\n\t}\n\n");
         return noParameterConstructor.concat(parameterConstructor);
     }
 
@@ -94,7 +94,7 @@ public class DTOGenerator implements Runnable{
                 String constructPlaceholder = buildConstructorPlaceholder(entity);
                 String file = "package " + packageName.concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
-                        .concat(String.format("\n\npublic class %s{\n\n",
+                        .concat(String.format("\n\npublic class %sDTO{\n\n",
                                 OrmUtils.getClassName(entity)))
                         .concat(String.join("\n", fields))
                         .concat(constructPlaceholder)

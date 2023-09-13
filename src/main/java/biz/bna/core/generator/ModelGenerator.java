@@ -71,7 +71,7 @@ public class ModelGenerator implements Runnable {
                 .concat("){\n\t\t")
                 .concat(columnMetadata.stream().map(metadata -> "this.".concat(OrmUtils.getAttributeName(metadata.getColumnName()))
                         .concat(" = ").concat(OrmUtils.getAttributeName(metadata.getColumnName()))).collect(Collectors.joining(";\n\t\t")))
-                .concat("\n\t}\n\n");
+                .concat(";\n\t}\n\n");
         return noParameterConstructor.concat(parameterConstructor);
     }
 
@@ -105,25 +105,3 @@ public class ModelGenerator implements Runnable {
         });
     }
 }
-/*select
-    c.column_name,
-    c.data_type,
-    c.character_maximum_length as max_lenght,
-    pgd.description,
-    case when c.is_nullable = 'YES' then 1 else 0 end as "nullable"
-from pg_catalog.pg_statio_all_tables as st
-inner join pg_catalog.pg_description pgd on (
-    pgd.objoid = st.relid
-)
-inner join information_schema.columns c on (
-    pgd.objsubid   = c.ordinal_position and
-    c.table_schema = st.schemaname and
-    c.table_name   = st.relname
-);
-
-SELECT c.column_name, c.data_type
-FROM information_schema.table_constraints tc
-JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)
-JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema
-  AND tc.table_name = c.table_name AND ccu.column_name = c.column_name
-WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = 'controlobject';*/
