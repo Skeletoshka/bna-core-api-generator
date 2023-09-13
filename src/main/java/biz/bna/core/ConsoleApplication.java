@@ -1,5 +1,6 @@
 package biz.bna.core;
 
+import biz.bna.core.generator.DTOGenerator;
 import biz.bna.core.generator.ModelGenerator;
 import biz.bna.core.utils.OrmUtils;
 import org.slf4j.Logger;
@@ -40,6 +41,11 @@ public class ConsoleApplication implements CommandLineRunner {
         ModelGenerator modelGenerator = new ModelGenerator(packageName);
         modelGenerator.forEntities(entities);
         modelGenerator.run();
+
+        //Генерация DTO
+        DTOGenerator dtoGenerator = new DTOGenerator(packageName);
+        dtoGenerator.forEntities(entities);
+        dtoGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {

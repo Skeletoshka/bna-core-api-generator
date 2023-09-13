@@ -1,11 +1,9 @@
 package biz.bna.core.generator;
 
-import biz.bna.core.ConsoleApplication;
 import biz.bna.core.dto.ColumnMetadata;
 import biz.bna.core.utils.DatabaseUtils;
 import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
-import biz.bna.core.utils.SqlUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
