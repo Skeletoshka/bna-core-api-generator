@@ -58,7 +58,7 @@ public class DTOGenerator implements Runnable{
                     OrmUtils.getAttributeName(metadata.getColumnName())));
             return getMethod.concat(setMethod);
         }).collect(Collectors.toList());
-        String toEntityPlaceholder = String.format("\tpublic %s toEntity(){\n\t\treturn toEntity(new %1$s)\n\t}\n\n\t",
+        String toEntityPlaceholder = String.format("\tpublic %s toEntity(){\n\t\treturn toEntity(new %1$s())\n\t}\n\n\t",
                         OrmUtils.getClassName(table))
                 .concat(String.format("public %s toEntity(%1$s entity){\n\t\t", OrmUtils.getClassName(table))
                         .concat(String.join("", columnsSet))
