@@ -1,9 +1,6 @@
 package biz.bna.core;
 
-import biz.bna.core.generator.DTOGenerator;
-import biz.bna.core.generator.ModelGenerator;
-import biz.bna.core.generator.ValidatorGenerator;
-import biz.bna.core.generator.ViewGenerator;
+import biz.bna.core.generator.*;
 import biz.bna.core.utils.OrmUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +55,11 @@ public class ConsoleApplication implements CommandLineRunner {
         ValidatorGenerator validatorGenerator = new ValidatorGenerator(packageName);
         validatorGenerator.forEntities(entities);
         validatorGenerator.run();
+
+        //Генерация Repository
+        RepositoryGenerator repositoryGenerator = new RepositoryGenerator(packageName);
+        repositoryGenerator.forEntities(entities);
+        repositoryGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {

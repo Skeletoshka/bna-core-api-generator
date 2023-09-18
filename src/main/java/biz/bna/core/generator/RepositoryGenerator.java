@@ -2,14 +2,12 @@ package biz.bna.core.generator;
 
 import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ValidatorGenerator implements Runnable{
+public class RepositoryGenerator implements Runnable{
 
     private final String packageName;
 
@@ -17,9 +15,10 @@ public class ValidatorGenerator implements Runnable{
 
     String template;
 
-    public ValidatorGenerator(String packageName){
+    public RepositoryGenerator(String packageName){
         this.packageName = packageName;
-        template = OrmUtils.getResourceFileAsString(File.separator + "template" + File.separator + "Validator.java");
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        template = OrmUtils.getResourceFileAsString(File.separator + "template" + File.separator + "Repository.java");
     }
 
     public void forEntities(String entities){
@@ -32,9 +31,12 @@ public class ValidatorGenerator implements Runnable{
             while(template.contains("{modelName}")){
                 template = template.replace("{modelName}", OrmUtils.getClassName(entity));
             }
-            template = template.replace("{packageName}", packageName.concat(".validator"));
+            while(template.contains("{tableName}")){
+                template = template.replace("{tableName}", entity);
+            }
+            template = template.replace("{packageName}", packageName.concat(".repository"));
             try {
-                FileWriter.writeFile(FileWriter.VALIDATOR_PATH, OrmUtils.getClassName(entity).concat("Validator.java"), template);
+                FileWriter.writeFile(FileWriter.REPOSITORY_PATH, OrmUtils.getClassName(entity).concat("Repository.java"), template);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
