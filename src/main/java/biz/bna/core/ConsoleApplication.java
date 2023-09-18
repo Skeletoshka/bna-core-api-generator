@@ -60,6 +60,11 @@ public class ConsoleApplication implements CommandLineRunner {
         RepositoryGenerator repositoryGenerator = new RepositoryGenerator(packageName);
         repositoryGenerator.forEntities(entities);
         repositoryGenerator.run();
+
+        //Генерация Service
+        ServiceGenerator serviceGenerator = new ServiceGenerator(packageName);
+        serviceGenerator.forEntities(entities);
+        serviceGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {
