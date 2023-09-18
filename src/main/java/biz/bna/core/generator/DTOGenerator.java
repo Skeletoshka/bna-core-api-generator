@@ -92,7 +92,7 @@ public class DTOGenerator implements Runnable{
                 List<String> fields = buildFieldsPlaceholder(entity, OrmUtils.getSchemaName());
                 List<String> methods = buildMethodsPlaceholder(entity);
                 String constructPlaceholder = buildConstructorPlaceholder(entity);
-                String file = "package " + packageName.concat("\n\n")
+                String file = "package " + packageName.concat(".dto;").concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
                         .concat(String.format("\n\npublic class %sDTO{\n\n",
                                 OrmUtils.getClassName(entity)))

@@ -90,7 +90,7 @@ public class ModelGenerator implements Runnable {
                 List<String> fields = buildFieldsPlaceholder(entity, OrmUtils.getSchemaName());
                 List<String> methods = buildMethodsPlaceholder();
                 String constructPlaceholder = buildConstructorPlaceholder(entity);
-                String file = "package " + packageName.concat("\n\n")
+                String file = "package " + packageName.concat(".model;").concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
                         .concat(String.format("\n\n@Entity\n@Table(name = \"%s\")\n public class %s{\n\n",
                                 entity, OrmUtils.getClassName(entity)))

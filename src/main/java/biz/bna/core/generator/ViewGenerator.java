@@ -82,7 +82,7 @@ public class ViewGenerator implements Runnable{
                 List<String> fields = buildFieldsPlaceholder(entity, OrmUtils.getSchemaName());
                 List<String> methods = buildMethodsPlaceholder();
                 String constructPlaceholder = buildConstructorPlaceholder(entity);
-                String file = "package " + packageName.concat("\n\n")
+                String file = "package " + packageName.concat(".view;").concat("\n\n")
                         .concat(String.join("\n", importPlaceholder))
                         .concat(String.format("\n\npublic class %sView{\n\n",
                                 OrmUtils.getClassName(entity)))
