@@ -19,6 +19,7 @@ public class FileWriter {
     public static final String SERVICE_PATH = "javaClasses\\service";
     public static final String VALIDATOR_PATH = "javaClasses\\validator";
     public static final String REPOSITORY_PATH = "javaClasses\\repository";
+    public static final String CONTROLLER_TEST_PATH = "javaClasses\\tests";
     public static void writeFile(String path,String fileName, String content) throws IOException {
         Files.createDirectories(Paths.get(path));
         Files.write(Paths.get(path.concat("\\").concat(fileName)), Collections.singleton(content), StandardCharsets.UTF_8);

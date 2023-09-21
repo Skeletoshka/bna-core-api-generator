@@ -70,6 +70,11 @@ public class ConsoleApplication implements CommandLineRunner {
         ControllerGenerator controllerGenerator = new ControllerGenerator(packageName);
         controllerGenerator.forEntities(entities);
         controllerGenerator.run();
+
+        //Генерация тестов
+        JavaTestGenerator javaTestGenerator = new JavaTestGenerator(packageName);
+        javaTestGenerator.forEntities(entities);
+        javaTestGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {
