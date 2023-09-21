@@ -5,6 +5,7 @@ import biz.bna.core.utils.DatabaseUtils;
 import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,6 +78,11 @@ public class ModelGenerator implements Runnable {
 
     @Override
     public void run() {
+        try {
+            FileWriter.clearCatalog(FileWriter.MODEL_PATH);
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage(), e);
+        }
         Arrays.stream(entities.split(",")).forEach(entity -> {
             try {
                 List<String> importPlaceholder = List.of(

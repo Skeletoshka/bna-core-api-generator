@@ -28,6 +28,11 @@ public class ValidatorGenerator implements Runnable{
 
     @Override
     public void run() {
+        try {
+            FileWriter.clearCatalog(FileWriter.VALIDATOR_PATH);
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage(), e);
+        }
         Arrays.stream(entities.split(",")).forEach(entity -> {
             while(template.contains("{modelName}")){
                 template = template.replace("{modelName}", OrmUtils.getClassName(entity));

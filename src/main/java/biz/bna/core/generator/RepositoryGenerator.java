@@ -27,6 +27,11 @@ public class RepositoryGenerator implements Runnable{
 
     @Override
     public void run() {
+        try {
+            FileWriter.clearCatalog(FileWriter.REPOSITORY_PATH);
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage(), e);
+        }
         Arrays.stream(entities.split(",")).forEach(entity -> {
             while(template.contains("{modelName}")){
                 template = template.replace("{modelName}", OrmUtils.getClassName(entity));

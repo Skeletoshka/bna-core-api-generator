@@ -25,6 +25,11 @@ public class ServiceGenerator implements Runnable{
 
     @Override
     public void run() {
+        try {
+            FileWriter.clearCatalog(FileWriter.SERVICE_PATH);
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage(), e);
+        }
         Arrays.stream(entities.split(",")).forEach(entity -> {
             String className = OrmUtils.getClassName(entity);
             while(template.contains("{modelName}")){

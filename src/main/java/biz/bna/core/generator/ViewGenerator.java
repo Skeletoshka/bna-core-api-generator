@@ -5,6 +5,7 @@ import biz.bna.core.utils.DatabaseUtils;
 import biz.bna.core.utils.FileWriter;
 import biz.bna.core.utils.OrmUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,6 +72,11 @@ public class ViewGenerator implements Runnable{
 
     @Override
     public void run() {
+        try {
+            FileWriter.clearCatalog(FileWriter.VIEW_PATH);
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage(), e);
+        }
         Arrays.stream(entities.split(",")).forEach(entity -> {
             try {
                 List<String> importPlaceholder = List.of(

@@ -1,5 +1,7 @@
 package biz.bna.core.utils;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +22,10 @@ public class FileWriter {
     public static void writeFile(String path,String fileName, String content) throws IOException {
         Files.createDirectories(Paths.get(path));
         Files.write(Paths.get(path.concat("\\").concat(fileName)), Collections.singleton(content), StandardCharsets.UTF_8);
+    }
+
+    public static void clearCatalog(String path) throws IOException {
+        FileUtils.cleanDirectory(new File(path));
     }
 
 }
