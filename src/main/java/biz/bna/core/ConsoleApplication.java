@@ -51,20 +51,25 @@ public class ConsoleApplication implements CommandLineRunner {
         viewGenerator.forEntities(entities);
         viewGenerator.run();
 
-        //Генерация Validator
+        //Генерация Валидатора
         ValidatorGenerator validatorGenerator = new ValidatorGenerator(packageName);
         validatorGenerator.forEntities(entities);
         validatorGenerator.run();
 
-        //Генерация Repository
+        //Генерация Репозитория
         RepositoryGenerator repositoryGenerator = new RepositoryGenerator(packageName);
         repositoryGenerator.forEntities(entities);
         repositoryGenerator.run();
 
-        //Генерация Service
+        //Генерация Сервиса
         ServiceGenerator serviceGenerator = new ServiceGenerator(packageName);
         serviceGenerator.forEntities(entities);
         serviceGenerator.run();
+
+        //Генерация Контроллера
+        ControllerGenerator controllerGenerator = new ControllerGenerator(packageName);
+        controllerGenerator.forEntities(entities);
+        controllerGenerator.run();
     }
 
     public static ApplicationContext getApplicationContext() {
